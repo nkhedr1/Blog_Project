@@ -1,0 +1,37 @@
+﻿@model CreateViewModel
+@{
+    ViewBag.Title = "Create";
+}
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/img/about-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <h1>Start Posting</h1>
+                    <span class="subheading">Express your self</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <form method="post">
+        <div class="form-group">
+            @Html.LabelFor(post => post.Title, "Title")
+            @Html.TextBoxFor(post => post.Title, new { @class = "form-control", placeholder = "Enter title here", id = "exampleFormControlInput1" })
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(post => post.Body, "Body")
+            @Html.TextAreaFor(post => post.Body, new { @class = "form-control", placeholder = "Enter your post here", id = "exampleFormControlTextarea1", rows = "3" })
+   
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Publish</button>
+    </form>
+</div>
+
+
