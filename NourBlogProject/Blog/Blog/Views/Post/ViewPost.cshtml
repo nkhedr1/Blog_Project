@@ -1,7 +1,27 @@
-﻿
+﻿@model ViewPostViewModel
 @{
     ViewBag.Title = "ViewPost";
 }
 
-<h2>ViewPost</h2>
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/img/about-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <h1>Post Details</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <p>@Model.Title</p>
+    <p>@Html.Raw(Model.Body)</p>
+    <p>@Model.DateCreated</p>
+    <p>@Model.DateUpdated</p>
+</div>
+
 

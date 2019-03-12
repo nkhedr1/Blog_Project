@@ -40,57 +40,68 @@ namespace Blog.Controllers
             //validates the required inputs from the paramter that they are all there
             if (!ModelState.IsValid)
             {
-
                 return View();
             }
 
             var userId = User.Identity.GetUserId();
 
-            //if (DbContext.Posts.Any(post => post.UserId == userId &&
-            //post.Title == postData.Title &&
-            //(!id.HasValue || post.Id != id.Value)))
-            //{
-            //    ModelState.AddModelError(nameof(RegisterEditMovieViewModel.MovieName),
-            //        "Movie name should be unique");
+           
+            Post currentPost;
 
-            //    PopulateViewBag();
-            //    return View();
-            //}
+            if (!id.HasValue)
+            {
+                currentPost = new Post();
+                currentPost.UserId = userId;
+                DbContext.Posts.Add(currentPost);
+            }
+            else
+            {
+                currentPost = DbContext.Posts.FirstOrDefault(
+               post => post.Id == id);
 
-            Post post;
+                if (currentPost == null)
+                {
+                    return RedirectToAction(nameof(PostController.ListPosts));
+                }
+            }
 
-            //if (!id.HasValue)
-            //{
-            post = new Post();
-            post.UserId = userId;
-            DbContext.Posts.Add(post);
-            //}
-            //else
-            //{
-            //    movie = DbContext.Movies.FirstOrDefault(
-            //   p => p.Id == id);
-
-            //    if (movie == null)
-            //    {
-            //        return RedirectToAction(nameof(MovieController.Index));
-            //    }
-            //}
-
-            post.Title = postData.Title;
-            post.Body = postData.Body;
-            post.DateCreated = DateTime.Today;
-            post.DateUpdated = DateTime.Today;
+            currentPost.Title = postData.Title;
+            currentPost.Body = postData.Body;
+            currentPost.DateCreated = DateTime.Today;
+            currentPost.DateUpdated = DateTime.Today;
             DbContext.SaveChanges();
 
-            //return RedirectToAction(nameof(HomeController.Index));
-            return View();
+            return RedirectToAction(nameof(PostController.ListPosts));
         }
 
-        public ActionResult ViewPost()
+        [HttpGet]
+        public ActionResult ViewPost(int? id)
         {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(PostController.ListPosts));
+            }
+                
 
+            var userId = User.Identity.GetUserId();
 
-            return View();
+            var selectedPost = DbContext.Posts.FirstOrDefault(post =>
+            post.Id == id.Value &&
+            post.UserId == userId);
+
+            if (selectedPost == null)
+            {
+                return RedirectToAction(nameof(PostController.ListPosts));
+            }
+                
+
+            var postToView = new ViewPostViewModel();
+            postToView.Title = selectedPost.Title;
+            postToView.Body = selectedPost.Body;
+            postToView.DateCreated = selectedPost.DateCreated;
+            postToView.DateUpdated = DateTime.Today;
+
+            return View(postToView);
         }
 
         [HttpGet]
@@ -98,7 +109,8 @@ namespace Blog.Controllers
         {
             if (!id.HasValue)
             {
-                return RedirectToAction(nameof(HomeController.Index));
+                return RedirectToAction(nameof(PostController.ListPosts));
+
             }
 
             var userId = User.Identity.GetUserId();
@@ -108,29 +120,47 @@ namespace Blog.Controllers
 
             if (postToModify == null)
             {
-                return RedirectToAction(nameof(HomeController.Index));
+                return RedirectToAction(nameof(PostController.ListPosts));
             }
 
 
-            var model = new RegisterEditMovieViewModel();
-            model.Category = movie.Category;
-            model.Rating = movie.Rating;
-            model.MovieName = movie.Name;
+            var editModel = new CreateViewModel();
+            editModel.Title = postToModify.Title;
+            editModel.Body = postToModify.Body;
 
-            return View(model);
+            return View(editModel);
         }
 
         [HttpPost]
-        public ActionResult Edit(int id, RegisterEditMovieViewModel formData)
+        public ActionResult Edit(int id, CreateViewModel postData)
         {
-            return SaveMovie(id, formData);
+            return SavePost(id, postData);
         }
 
-        public ActionResult Delete()
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Delete(int? id)
         {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(PostController.ListPosts));
+            }
 
+            var userId = User.Identity.GetUserId();
 
-            return View();
+            var postToRemove = DbContext.Posts.FirstOrDefault(
+                post => post.Id == id && post.UserId == userId);
+
+    //        var postToRemove = DbContext.Posts.FirstOrDefault(
+    //post => post.Id == id);
+
+            if (postToRemove != null)
+            {
+                DbContext.Posts.Remove(postToRemove);
+                DbContext.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(PostController.ListPosts));
         }
 
         public ActionResult ListPosts()

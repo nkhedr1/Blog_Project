@@ -11,13 +11,7 @@
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="post-heading">
-                    <h1>Man must explore, and this is exploration at its greatest</h1>
-                    <h2 class="subheading">Problems look mighty small from 150 miles up</h2>
-                    <span class="meta">
-                        Posted by
-                        <a href="#">Start Bootstrap</a>
-                        on August 24, 2019
-                    </span>
+                    <h1>Blog Posts</h1>
                 </div>
             </div>
         </div>
@@ -53,12 +47,19 @@
                         <tr>
                             <td>@post.Title</td>
                             <td>@post.DateCreated</td>
-                            <td><a href="@Url.Action("Edit", "Post", new { id = post.Id })">Edit</a></td>
                             <td>
-                                <form method="post" action="@Url.Action("Delete", "Post", new { id = post.Id })">
-                                    <a href="#" class="btn-delete">Delete</a>
-                                </form>
+                                <a href="@Url.Action("ViewPost", "Post", new { id = post.Id })">Details</a>
                             </td>
+                            <td><a href="@Url.Action("Edit", "Post", new { id = post.Id })">Edit</a></td>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <td>
+                                    <form method="post" action="@Url.Action("Delete", "Post", new { id = post.Id })">
+                                        <a href="#" class="btn-delete">Delete</a>
+                                    </form>
+                                </td>
+                            }
+
                         </tr>
                         }
                         </tbody>
