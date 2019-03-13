@@ -5,15 +5,14 @@ using System.Web;
 using System.Web.Mvc;
 using Blog.Models;
 using Blog.Models.Domain;
+using Blog.Models.ViewModels;
+using Microsoft.AspNet.Identity;
 
 namespace Blog.Controllers
 {
     public class HomeController : Controller
 
     {
-       
-
-
         public ActionResult Index()
         {
             return View();
@@ -31,8 +30,7 @@ namespace Blog.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
-        }
-
-       
+        }   
+        
     }
 }

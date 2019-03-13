@@ -7,6 +7,7 @@ using Blog.Models;
 using Microsoft.AspNet.Identity;
 using Blog.Models.Domain;
 using Blog.Models.ViewModels;
+using System.IO;
 
 namespace Blog.Controllers
 {
@@ -14,6 +15,23 @@ namespace Blog.Controllers
     {
 
         private ApplicationDbContext DbContext;
+
+        [HttpGet]
+        public ActionResult BlogIndex()
+        {
+            var userId = User.Identity.GetUserId();
+
+            var allPosts = DbContext.Posts
+                .Select(post => new ListPostsViewModel
+                {
+                    Id = post.Id,
+                    Title = post.Title,
+                    Body = post.Body,
+                    DateCreated = post.DateCreated
+                }).ToList();
+
+            return View(allPosts);
+        }
 
         public PostController()
         {
@@ -37,7 +55,7 @@ namespace Blog.Controllers
 
         private ActionResult SavePost(int? id, CreateViewModel postData)
         {
-            //validates the required inputs from the paramter that they are all there
+
             if (!ModelState.IsValid)
             {
                 return View();
@@ -45,7 +63,7 @@ namespace Blog.Controllers
 
             var userId = User.Identity.GetUserId();
 
-           
+
             Post currentPost;
 
             if (!id.HasValue)
@@ -65,6 +83,13 @@ namespace Blog.Controllers
                 }
             }
 
+            //if (postData.UploadedFile.ContentLength > 0 && postData.UploadedFile != null)
+            //{
+            //    var fileName = Path.GetFileName(postData.UploadedFile.FileName);
+            //    var path = Path.Combine(Server.MapPath("~/uploads"), fileName);
+            //    postData.UploadedFile.SaveAs(path);
+            //}
+
             currentPost.Title = postData.Title;
             currentPost.Body = postData.Body;
             currentPost.DateCreated = DateTime.Today;
@@ -81,7 +106,7 @@ namespace Blog.Controllers
             {
                 return RedirectToAction(nameof(PostController.ListPosts));
             }
-                
+
 
             var userId = User.Identity.GetUserId();
 
@@ -93,7 +118,7 @@ namespace Blog.Controllers
             {
                 return RedirectToAction(nameof(PostController.ListPosts));
             }
-                
+
 
             var postToView = new ViewPostViewModel();
             postToView.Title = selectedPost.Title;
@@ -131,8 +156,43 @@ namespace Blog.Controllers
             return View(editModel);
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditAdmin(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(PostController.ListPosts));
+
+            }
+
+            var userId = User.Identity.GetUserId();
+
+            var postToModify = DbContext.Posts.FirstOrDefault(
+                post => post.Id == id && post.UserId == userId);
+
+            if (postToModify == null)
+            {
+                return RedirectToAction(nameof(PostController.ListPosts));
+            }
+
+
+            var editModel = new CreateViewModel();
+            editModel.Title = postToModify.Title;
+            editModel.Body = postToModify.Body;
+
+            return View(editModel);
+        }
+
         [HttpPost]
         public ActionResult Edit(int id, CreateViewModel postData)
+        {
+            return SavePost(id, postData);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public ActionResult EditAdmin(int id, CreateViewModel postData)
         {
             return SavePost(id, postData);
         }
@@ -150,9 +210,6 @@ namespace Blog.Controllers
 
             var postToRemove = DbContext.Posts.FirstOrDefault(
                 post => post.Id == id && post.UserId == userId);
-
-    //        var postToRemove = DbContext.Posts.FirstOrDefault(
-    //post => post.Id == id);
 
             if (postToRemove != null)
             {
@@ -182,16 +239,6 @@ namespace Blog.Controllers
 
         }
 
-        public ActionResult LogInPage()
-        {
 
-            return View();
-        }
-
-        public ActionResult Register()
-        {
-
-            return View();
-        }
     }
 }

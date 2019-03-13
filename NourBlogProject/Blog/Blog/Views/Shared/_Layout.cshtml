@@ -34,6 +34,9 @@
                         <a class="nav-link" href="@Url.Action("Index", "Home")">Home</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("BlogIndex", "Post")">Blog Index</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("About", "Home")">About</a>
                     </li>
                     <li class="nav-item">
@@ -42,9 +45,8 @@
                     <li class="nav-item">
                         <a class="nav-link" href="@Url.Action("Contact", "Home")">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Login", "Account")">Log In</a>
-                    </li>
+
+                    @Html.Partial("_LoginPartial")
                 </ul>
             </div>
         </div>

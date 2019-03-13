@@ -15,5 +15,7 @@ namespace Blog.Models.ViewModels
         [AllowHtml]
         [Required]
         public string Body { get; set; }
+
+        public HttpPostedFileBase UploadedFile { get; set; }
     }
 }

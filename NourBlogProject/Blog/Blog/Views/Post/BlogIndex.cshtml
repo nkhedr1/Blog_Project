@@ -1,0 +1,76 @@
+﻿@model List<ListPostsViewModel>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<!-- Page Header -->
+<header class="masthead" style="background-image: url('/img/home-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>Clean Blog</h1>
+                    <span class="subheading">A Blog Theme by Start Bootstrap</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+
+        @if (!Model.Any())
+        {
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <p><strong>There is no posts</strong></p>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Title</th>
+                                <th scope="col">Date Created</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var post in Model)
+                            {
+                                <tr>
+                                    <td>@post.Title</td>
+                                    <td>@post.DateCreated</td>
+                                    <td>
+                                        <a href="@Url.Action("ViewPost", "Post", new { id = post.Id })">Details</a>
+                                    </td>
+                                    <td><a href="@Url.Action("EditAdmin", "Post", new { id = post.Id })">Edit</a></td>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <td>
+                                            <form method="post" action="@Url.Action("Delete", "Post", new { id = post.Id })">
+                                                <a href="#" class="btn-delete">Delete</a>
+                                            </form>
+                                        </td>
+                                    }
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</article>
+
+<hr>
+
+

@@ -1905,7 +1905,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Post\BlogIndex.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
@@ -1998,13 +1998,14 @@
     <Content Include="vendor\jquery\jquery.min.map" />
     <Content Include="vendor\jquery\jquery.slim.min.map" />
     <Content Include="Views\Post\LogInPage.cshtml" />
-    <Content Include="Views\Post\Register.cshtml" />
     <Content Include="Views\Post\Edit.cshtml" />
     <Content Include="vendor\tinymce\skins\ui\oxide\fonts\tinymce-mobile.woff" />
     <Content Include="vendor\tinymce\langs\readme.md" />
+    <Content Include="Views\Home\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="uploads\" />
     <Folder Include="Views\Blog\" />
     <Folder Include="Views\ViewPostViewModel\" />
   </ItemGroup>
