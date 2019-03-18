@@ -48,14 +48,19 @@
                             <td>@post.Title</td>
                             <td>@post.DateCreated</td>
                             <td>
-                                <a href="@Url.Action("ViewPost", "Post", new { id = post.Id })">Details</a>
+                                <a href="@Url.Action("ViewPost", "Post", new {title = post.SlugTitle})">Details</a>
                             </td>
-                            <td><a href="@Url.Action("Edit", "Post", new { id = post.Id })">Edit</a></td>
                             @if (User.IsInRole("Admin"))
                             {
+                                <td><a href="@Url.Action("Edit", "Post", new { id = post.Id })">Edit</a></td>
                                 <td>
                                     <form method="post" action="@Url.Action("Delete", "Post", new { id = post.Id })">
-                                        <a href="#" class="btn-delete">Delete</a>
+                                        <input type="submit" value="Delete" lass="btn-delete">
+                                    </form>
+                                </td>
+                                <td>
+                                    <form method="post" action="@Url.Action("Publish", "Post", new { id = post.Id })">
+                                        <input type="submit" value="Publish" lass="btn-delete">
                                     </form>
                                 </td>
                             }

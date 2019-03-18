@@ -51,7 +51,7 @@
                                     <td>
                                         <a href="@Url.Action("ViewPost", "Post", new { id = post.Id })">Details</a>
                                     </td>
-                                    <td><a href="@Url.Action("EditAdmin", "Post", new { id = post.Id })">Edit</a></td>
+                                    <td><a href="@Url.Action("Edit", "Post", new { id = post.Id })">Edit</a></td>
                                     @if (User.IsInRole("Admin"))
                                     {
                                         <td>

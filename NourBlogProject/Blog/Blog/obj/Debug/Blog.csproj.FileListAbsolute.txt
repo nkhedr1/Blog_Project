@@ -107,3 +107,9 @@ C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\obj\Debug\Blog.csproj.CopyC
 C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\obj\Debug\Blog.dll
 C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\obj\Debug\Blog.pdb
 C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\obj\Debug\Blog.csprojAssemblyReference.cache
+C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\bin\System.Net.Http.Formatting.dll
+C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\bin\System.Web.Http.dll
+C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\bin\System.Web.Http.WebHost.dll
+C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\bin\System.Net.Http.Formatting.xml
+C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\bin\System.Web.Http.xml
+C:\MITT\Back End\MVC2\Blog\NourBlogProject\Blog\Blog\bin\System.Web.Http.WebHost.xml

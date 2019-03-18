@@ -11,10 +11,18 @@ using System.IO;
 
 namespace Blog.Controllers
 {
+    [Authorize]
     public class PostController : Controller
     {
+        private List<string> AllowedExtenions = new List<string>
+                { ".jpeg", ".jpg", ".gif", ".png" };
 
         private ApplicationDbContext DbContext;
+
+        public PostController()
+        {
+            DbContext = new ApplicationDbContext();
+        }
 
         [HttpGet]
         public ActionResult BlogIndex()
@@ -33,12 +41,8 @@ namespace Blog.Controllers
             return View(allPosts);
         }
 
-        public PostController()
-        {
-            DbContext = new ApplicationDbContext();
-        }
-
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
 
@@ -46,6 +50,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(CreateViewModel postData)
         {
 
@@ -55,6 +60,13 @@ namespace Blog.Controllers
 
         private ActionResult SavePost(int? id, CreateViewModel postData)
         {
+            var fileExtension = Path.GetExtension(postData.UploadedFile.FileName).ToLower();
+
+            if (!AllowedExtenions.Contains(fileExtension))
+            {
+                ModelState.AddModelError("", "File extension is not allowed");
+                return View();
+            }
 
             if (!ModelState.IsValid)
             {
@@ -66,6 +78,7 @@ namespace Blog.Controllers
 
             Post currentPost;
 
+
             if (!id.HasValue)
             {
                 currentPost = new Post();
@@ -74,7 +87,7 @@ namespace Blog.Controllers
             }
             else
             {
-                currentPost = DbContext.Posts.FirstOrDefault(
+               currentPost = DbContext.Posts.FirstOrDefault(
                post => post.Id == id);
 
                 if (currentPost == null)
@@ -83,26 +96,34 @@ namespace Blog.Controllers
                 }
             }
 
-            //if (postData.UploadedFile.ContentLength > 0 && postData.UploadedFile != null)
-            //{
-            //    var fileName = Path.GetFileName(postData.UploadedFile.FileName);
-            //    var path = Path.Combine(Server.MapPath("~/uploads"), fileName);
-            //    postData.UploadedFile.SaveAs(path);
-            //}
 
-            currentPost.Title = postData.Title;
+
+            currentPost.Title = postData.Title;       
             currentPost.Body = postData.Body;
+            currentPost.SlugTitle = postData.SlugRoute(postData.Title);
+            // Checking if the SlugTitle is a duplicate
+            Post slugTitleDuplicateQuery = DbContext.Posts.FirstOrDefault(
+               post => post.SlugTitle == currentPost.SlugTitle);
+
+            if (slugTitleDuplicateQuery != null)
+            {
+                currentPost.SlugTitle = String.Concat(currentPost.SlugTitle, "1");
+            }
+
             currentPost.DateCreated = DateTime.Today;
-            currentPost.DateUpdated = DateTime.Today;
+            currentPost.Published = postData.Published;
+            currentPost.MediaUrl = UploadFile(postData.UploadedFile);
+           
             DbContext.SaveChanges();
 
             return RedirectToAction(nameof(PostController.ListPosts));
         }
 
         [HttpGet]
-        public ActionResult ViewPost(int? id)
+        [Route("blog/{title}")]
+        public ActionResult ViewPost(string title)
         {
-            if (!id.HasValue)
+            if (string.IsNullOrWhiteSpace(title))
             {
                 return RedirectToAction(nameof(PostController.ListPosts));
             }
@@ -111,7 +132,7 @@ namespace Blog.Controllers
             var userId = User.Identity.GetUserId();
 
             var selectedPost = DbContext.Posts.FirstOrDefault(post =>
-            post.Id == id.Value &&
+            post.SlugTitle == title &&
             post.UserId == userId);
 
             if (selectedPost == null)
@@ -130,6 +151,7 @@ namespace Blog.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (!id.HasValue)
@@ -156,46 +178,14 @@ namespace Blog.Controllers
             return View(editModel);
         }
 
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public ActionResult EditAdmin(int? id)
-        {
-            if (!id.HasValue)
-            {
-                return RedirectToAction(nameof(PostController.ListPosts));
-
-            }
-
-            var userId = User.Identity.GetUserId();
-
-            var postToModify = DbContext.Posts.FirstOrDefault(
-                post => post.Id == id && post.UserId == userId);
-
-            if (postToModify == null)
-            {
-                return RedirectToAction(nameof(PostController.ListPosts));
-            }
-
-
-            var editModel = new CreateViewModel();
-            editModel.Title = postToModify.Title;
-            editModel.Body = postToModify.Body;
-
-            return View(editModel);
-        }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int id, CreateViewModel postData)
         {
             return SavePost(id, postData);
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public ActionResult EditAdmin(int id, CreateViewModel postData)
-        {
-            return SavePost(id, postData);
-        }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
@@ -223,20 +213,60 @@ namespace Blog.Controllers
         public ActionResult ListPosts()
         {
             var userId = User.Identity.GetUserId();
+            List<ListPostsViewModel> blogPosts;
+            if (User.IsInRole("Admin"))
+            {
+                blogPosts = DbContext.Posts
+                               .Where(post => post.UserId == userId)
+                               .Select(post => new ListPostsViewModel
+                               {
+                                   Id = post.Id,
+                                   Title = post.Title,
+                                   Body = post.Body,
+                                   DateCreated = post.DateCreated,
+                                   SlugTitle = post.SlugTitle,
+                                   Published = post.Published
+                               }).ToList();
+            }
 
-            var blogPosts = DbContext.Posts
-                .Where(post => post.UserId == userId)
-                .Select(post => new ListPostsViewModel
-                {
-                    Id = post.Id,
-                    Title = post.Title,
-                    Body = post.Body,
-                    DateCreated = post.DateCreated
-                }).ToList();
+            else
+            {
+                blogPosts = DbContext.Posts
+                               .Where(post => post.Published)
+                               .Select(post => new ListPostsViewModel
+                               {
+                                   Id = post.Id,
+                                   Title = post.Title,
+                                   Body = post.Body,
+                                   DateCreated = post.DateCreated,
+                                   Published = post.Published
+                               }).ToList();
+            }
+               
 
             return View(blogPosts);
 
 
+        }
+
+        private string UploadFile(HttpPostedFileBase file)
+        {
+            if (file != null)
+            {
+                var uploadFolder = "~/Upload/";
+                var mappedFolder = Server.MapPath(uploadFolder);
+
+                if (!Directory.Exists(mappedFolder))
+                {
+                    Directory.CreateDirectory(mappedFolder);
+                }
+
+                file.SaveAs(mappedFolder + file.FileName);
+
+                return uploadFolder + file.FileName;
+            }
+
+            return null;
         }
 
 
