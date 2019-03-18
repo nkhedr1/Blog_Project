@@ -6,6 +6,7 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using Blog.Models;
+using Owin.Security.Providers.GitHub;
 
 namespace Blog
 {
@@ -58,11 +59,15 @@ namespace Blog
             //   appId: "",
             //   appSecret: "");
 
-            //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
-            //{
-            //    ClientId = "",
-            //    ClientSecret = ""
-            //});
+            app.UseGitHubAuthentication(
+                    clientId: "bec42577e2dde2556261",
+                    clientSecret: "bf9a3e7b8635fb8f3144718279c0f29db1c77ab2");
+
+            app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
+            {
+                ClientId = "764145148600-6io36uhmpqmtub38g52s7jbjuk4bjea5.apps.googleusercontent.com",
+                ClientSecret = "USKjMItrLd_lgHUrKEnEcSGZ"
+            });
         }
     }
 }
