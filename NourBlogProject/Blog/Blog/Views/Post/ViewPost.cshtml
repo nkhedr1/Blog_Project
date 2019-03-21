@@ -18,10 +18,28 @@
 </header>
 
 <div class="container">
-    <p>@Model.Title</p>
-    <p>@Html.Raw(Model.Body)</p>
-    <p>@Model.DateCreated</p>
-    <p>@Model.DateUpdated</p>
+    <p>Title: @Model.Title</p>
+    <p>Body: @Html.Raw(Model.Body)</p>
+    <p>Date Created: @Model.DateCreated</p>
+    <p>Date Updated: @Model.DateUpdated</p>
+    <p>
+        <a href="@Url.Action("AddComment", "Post", new { id = Model.Id })">Add Comment</a>
+    </p>
+
+    @if (Model.Comments.Count() == 0)
+    {
+        <p>No Comments</p>
+    }
+    else
+    {
+        <p>Comments:</p>
+        foreach (var comment in Model.Comments)
+        {
+            <p> Comment: @comment.Body</p>
+        }
+    }
+
+
 </div>
 
 

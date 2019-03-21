@@ -17,6 +17,7 @@ namespace Blog.Models.Domain
         public bool Published { get; set; }
         public string MediaUrl { get; set; }
         public string SlugTitle { get; set; }
+        public virtual List<Comment> Comments { get; set; }
 
         public Post()
         {

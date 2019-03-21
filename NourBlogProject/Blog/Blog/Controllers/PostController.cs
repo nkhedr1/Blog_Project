@@ -18,10 +18,12 @@ namespace Blog.Controllers
                 { ".jpeg", ".jpg", ".gif", ".png" };
 
         private ApplicationDbContext DbContext;
+        public List<Comment> Comments { get; set; }
 
         public PostController()
         {
             DbContext = new ApplicationDbContext();
+            Comments = new List<Comment>();
         }
 
         [HttpGet]
@@ -72,7 +74,7 @@ namespace Blog.Controllers
             {
                 return View();
             }
-
+            
             var userId = User.Identity.GetUserId();
 
 
@@ -121,7 +123,7 @@ namespace Blog.Controllers
 
         [HttpGet]
         [Route("blog/{title}")]
-        public ActionResult ViewPost(string title)
+        public ActionResult ViewPost(string title, int id)
         {
             if (string.IsNullOrWhiteSpace(title))
             {
@@ -140,12 +142,27 @@ namespace Blog.Controllers
                 return RedirectToAction(nameof(PostController.ListPosts));
             }
 
+            
+
 
             var postToView = new ViewPostViewModel();
             postToView.Title = selectedPost.Title;
+            postToView.Id = selectedPost.Id;
             postToView.Body = selectedPost.Body;
             postToView.DateCreated = selectedPost.DateCreated;
             postToView.DateUpdated = DateTime.Today;
+            Comments = DbContext.Comments.ToList();
+
+            var postComments = Comments
+                               .Where(comment => comment.PostId == id)
+                               .Select(comment => new Comment
+                               {
+                                   Id = comment.Id,
+                                   Body = comment.Body,
+                                   DateCreated = comment.DateCreated
+                               }).ToList();
+
+            postToView.Comments = postComments;
 
             return View(postToView);
         }
@@ -269,6 +286,78 @@ namespace Blog.Controllers
             return null;
         }
 
+        [HttpGet]
+        public ActionResult AddComment()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult AddComment(int id, AddCommentViewModel commentData)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+            var userId = User.Identity.GetUserId();
+
+            Comment currentComment;
+
+            currentComment = new Comment();
+            currentComment.UserId = userId;
+
+            //if (currentComment == null)
+            //{
+            //    return RedirectToAction(nameof(CommentController.AddComment));
+            //}
+            currentComment.PostId = id;
+            currentComment.Body = commentData.Body;
+            currentComment.UpdatedReason = commentData.UpdatedReason;
+            currentComment.DateCreated = DateTime.Today;
+            currentComment.DateUpdated = DateTime.Today;
+            DbContext.Comments.Add(currentComment);
+            //Comments.Add(currentComment);
+            DbContext.SaveChanges();
+
+            return RedirectToAction(nameof(PostController.ListPosts));
+            //return View();
+            //return SaveComment(id, commentData);
+            //return RedirectToAction(nameof(PostController.BlogIndex));
+
+        }
+
+        //private ActionResult SaveComment(int id, AddCommentViewModel commentData)
+        //{
+
+        //    //if (!ModelState.IsValid)
+        //    //{
+        //    //    return View();
+        //    //}
+
+        //    var userId = User.Identity.GetUserId();
+
+        //    Comment currentComment;
+
+        //    currentComment = new Comment();
+        //    currentComment.UserId = userId;
+
+        //    //if (currentComment == null)
+        //    //{
+        //    //    return RedirectToAction(nameof(CommentController.AddComment));
+        //    //}
+        //    currentComment.PostId = id;
+        //    currentComment.Body = commentData.Body;
+        //    currentComment.UpdatedReason = commentData.UpdatedReason;
+        //    currentComment.DateCreated = DateTime.Today;
+        //    currentComment.DateUpdated = DateTime.Today;
+        //    DbContext.Comments.Add(currentComment);
+        //    //Comments.Add(currentComment);
+        //    DbContext.SaveChanges();
+
+        //    return RedirectToAction(nameof(PostController.BlogIndex));
+        //    //return View();
+        //}
 
     }
 }

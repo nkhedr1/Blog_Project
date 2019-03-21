@@ -48,8 +48,9 @@
                             <td>@post.Title</td>
                             <td>@post.DateCreated</td>
                             <td>
-                                <a href="@Url.Action("ViewPost", "Post", new {title = post.SlugTitle})">Details</a>
+                                <a href="@Url.Action("ViewPost", "Post", new {title = post.SlugTitle, id = post.Id})">Details</a>
                             </td>
+                            
                             @if (User.IsInRole("Admin"))
                             {
                                 <td><a href="@Url.Action("Edit", "Post", new { id = post.Id })">Edit</a></td>

@@ -28,7 +28,7 @@ namespace Blog.Models.ViewModels
         {
             int titleNum = rnd.Next(1, 99999999);
             string titleStringNum = Convert.ToString(titleNum);
-           
+
             title = title.ToLower();
             // removing invalid charachers           
             title = Regex.Replace(title, @"[^a-z0-9\s-]", "");
