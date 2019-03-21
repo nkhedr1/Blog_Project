@@ -10,10 +10,8 @@ namespace Blog.Models.ViewModels
     {
         public int Id { get; set; }
 
-        //[Required]
         public string Body { get; set; }
 
-        //[Required]
         public string UpdatedReason { get; set; }
 
         public int PostId { get; set; }

@@ -18,13 +18,24 @@
 </header>
 
 <div class="container">
-    <p>Title: @Model.Title</p>
-    <p>Body: @Html.Raw(Model.Body)</p>
-    <p>Date Created: @Model.DateCreated</p>
-    <p>Date Updated: @Model.DateUpdated</p>
-    <p>
-        <a href="@Url.Action("AddComment", "Post", new { id = Model.Id })">Add Comment</a>
-    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Body</th>
+                <th scope="col">Date Created</th>
+                <th scope="col">Date Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">@Model.Title</th>
+                <td>@Html.Raw(Model.Body)</td>
+                <td>@Model.DateCreated</td>
+                <td>@Model.DateUpdated</td>
+            </tr>
+        </tbody>
+    </table>
 
     @if (Model.Comments.Count() == 0)
     {
@@ -32,12 +43,31 @@
     }
     else
     {
-        <p>Comments:</p>
-        foreach (var comment in Model.Comments)
-        {
-            <p> Comment: @comment.Body</p>
-        }
+        <p>Comments</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Body</th>
+                    <th scope="col">Edit</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var comment in Model.Comments)
+                {
+                    <tr>
+                        <td>@comment.Body</td>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <td><a href="@Url.Action("EditComment", "Post", new { id = Model.Id })">Edit Comment</a></td>
+                        }
+                    </tr>
+                }
+
+            </tbody>
+        </table>
     }
+
 
 
 </div>

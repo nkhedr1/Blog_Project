@@ -1,7 +1,6 @@
 ﻿@model AddCommentViewModel
-
 @{
-    ViewBag.Title = "AddComment";
+    ViewBag.Title = "EditComment";
 }
 
 @section scripts{
@@ -23,7 +22,7 @@
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="page-heading">
-                    <h1>Add Comment</h1>
+                    <h1>Edit Comment</h1>
                 </div>
             </div>
         </div>
@@ -31,7 +30,7 @@
 </header>
 
 <div class="container">
-    <form method="post" enctype="multipart/form-data"}>
+    <form method="post" enctype="multipart/form-data" }>
         <div class="form-group">
             @Html.LabelFor(comment => comment.Body, "Comment")
             @Html.TextBoxFor(comment => comment.Body, new { @class = "form-control", placeholder = "Enter comment here" })
@@ -41,5 +40,6 @@
 
     </form>
 </div>
+
 
 

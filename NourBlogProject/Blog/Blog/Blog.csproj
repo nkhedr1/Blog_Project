@@ -226,7 +226,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\PostController.cs" />
@@ -2061,6 +2060,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Post\AddComment.cshtml" />
     <Content Include="Views\Post\_DisplayCommentsPartial.cshtml" />
+    <Content Include="Views\Post\EditComment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
